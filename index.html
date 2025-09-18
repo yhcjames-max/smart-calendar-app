@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swimming Lessons Calendar</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>🏊‍♀️ Swimming Lessons Calendar</h1>
+            <button id="add-lesson-btn" class="btn-primary">+ Add Swimming Lesson</button>
+        </header>
+
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <button id="prev-month" class="nav-btn">‹</button>
+                <h2 id="month-year"></h2>
+                <button id="next-month" class="nav-btn">›</button>
+            </div>
+            
+            <div class="calendar-grid">
+                <div class="day-header">Sun</div>
+                <div class="day-header">Mon</div>
+                <div class="day-header">Tue</div>
+                <div class="day-header">Wed</div>
+                <div class="day-header">Thu</div>
+                <div class="day-header">Fri</div>
+                <div class="day-header">Sat</div>
+                <div id="calendar-days"></div>
+            </div>
+        </div>
+
+        <div class="upcoming-lessons">
+            <h3>Upcoming Swimming Lessons</h3>
+            <div id="lessons-list"></div>
+        </div>
+    </div>
+
+    <!-- Modal for adding/editing lessons -->
+    <div id="lesson-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modal-title">Add Swimming Lesson</h2>
+            <form id="lesson-form">
+                <div class="form-group">
+                    <label for="lesson-title">Lesson Title:</label>
+                    <input type="text" id="lesson-title" required placeholder="e.g., Freestyle Technique">
+                </div>
+                
+                <div class="form-group">
+                    <label for="lesson-date">Date:</label>
+                    <input type="date" id="lesson-date" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="lesson-time">Time:</label>
+                    <input type="time" id="lesson-time" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="lesson-duration">Duration (minutes):</label>
+                    <input type="number" id="lesson-duration" min="15" max="180" value="60">
+                </div>
+                
+                <div class="form-group">
+                    <label for="lesson-instructor">Instructor:</label>
+                    <input type="text" id="lesson-instructor" placeholder="Optional">
+                </div>
+                
+                <div class="form-group">
+                    <label for="lesson-notes">Notes:</label>
+                    <textarea id="lesson-notes" rows="3" placeholder="Any additional notes..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="enable-notification">
+                        Enable notification reminder (15 minutes before)
+                    </label>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="submit" class="btn-primary">Save Lesson</button>
+                    <button type="button" id="cancel-btn" class="btn-secondary">Cancel</button>
+                    <button type="button" id="delete-btn" class="btn-danger" style="display: none;">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification permission banner -->
+    <div id="notification-banner" class="notification-banner" style="display: none;">
+        <p>Enable notifications to get reminders for your swimming lessons!</p>
+        <button id="enable-notifications" class="btn-primary">Enable Notifications</button>
+        <button id="dismiss-banner" class="btn-secondary">Dismiss</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
