@@ -1,0 +1,32 @@
+{
+  "name": "swimming-calendar",
+  "version": "1.0.0",
+  "description": "A beautiful web application for managing swimming lessons with notification reminders",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "serve": "python3 -m http.server 8000",
+    "dev": "python3 -m http.server 8000",
+    "deploy": "./deploy.sh"
+  },
+  "keywords": [
+    "calendar",
+    "swimming",
+    "lessons",
+    "scheduler",
+    "notifications",
+    "web-app"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "homepage": ".",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/username/swimming-calendar.git"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
+
+
