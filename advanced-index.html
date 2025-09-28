@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏊‍♀️ Swimming Lessons Calendar - Advanced</title>
+    
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Existing Styles -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- New Scheduler Styles -->
+    <link rel="stylesheet" href="scheduler-styles.css">
+    
+    <!-- Additional inline styles for integration -->
+    <style>
+        /* Integration styles */
+        .availability-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e6ff;
+        }
+        
+        .availability-header h4 {
+            margin: 0;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .availability-day-group {
+            margin-bottom: 25px;
+        }
+        
+        .availability-day-group h6 {
+            color: #667eea;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        
+        .slot-notes {
+            color: #666;
+            font-size: 12px;
+            font-style: italic;
+        }
+        
+        .priority-badge {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 500;
+            color: white;
+        }
+        
+        .priority-badge.priority-high {
+            background: #f44336;
+        }
+        
+        .priority-badge.priority-medium {
+            background: #ff9800;
+        }
+        
+        .priority-badge.priority-low {
+            background: #4caf50;
+        }
+        
+        .date-badge, .recurring-badge {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .availability-slot-details {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .recommendation-details {
+            padding: 20px 0;
+        }
+        
+        .recommendation-details ul {
+            padding-left: 20px;
+        }
+        
+        .recommendation-details li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Existing Calendar Interface -->
+    <div class="container">
+        <header class="header">
+            <h1>🏊‍♀️ Swimming Lessons Calendar</h1>
+            <button class="add-lesson-btn" id="addLessonBtn">
+                <i class="fas fa-plus"></i> Add Swimming Lesson
+            </button>
+        </header>
+
+        <div class="calendar-nav">
+            <button class="nav-btn" id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+            <h2 id="currentMonthYear"></h2>
+            <button class="nav-btn" id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+        </div>
+
+        <div class="calendar" id="calendar">
+            <div class="calendar-header">
+                <div class="day-header">Sun</div>
+                <div class="day-header">Mon</div>
+                <div class="day-header">Tue</div>
+                <div class="day-header">Wed</div>
+                <div class="day-header">Thu</div>
+                <div class="day-header">Fri</div>
+                <div class="day-header">Sat</div>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+
+        <div class="upcoming-lessons">
+            <h3><i class="fas fa-list"></i> Upcoming Swimming Lessons</h3>
+            <div id="upcomingLessons"></div>
+        </div>
+    </div>
+
+    <!-- Notification Banner -->
+    <div id="notificationBanner" class="notification-banner">
+        <div class="banner-content">
+            <i class="fas fa-bell"></i>
+            <span>Enable notifications to get reminders for your swimming lessons!</span>
+        </div>
+        <div class="banner-actions">
+            <button id="enableNotificationsBtn">Enable Notifications</button>
+            <button id="dismissBanner">Dismiss</button>
+        </div>
+    </div>
+
+    <!-- Existing Lesson Modal -->
+    <div id="lessonModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add Swimming Lesson</h2>
+                <button class="close-btn" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="lessonForm">
+                <div class="form-group">
+                    <label for="lessonTitle">
+                        <i class="fas fa-swimmer"></i>
+                        Lesson Title:
+                    </label>
+                    <input type="text" id="lessonTitle" placeholder="e.g., Freestyle technique practice" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lessonDate">
+                            <i class="fas fa-calendar-day"></i>
+                            Date:
+                        </label>
+                        <input type="date" id="lessonDate" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="lessonTime">
+                            <i class="fas fa-clock"></i>
+                            Time:
+                        </label>
+                        <input type="time" id="lessonTime" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lessonDuration">
+                            <i class="fas fa-hourglass-half"></i>
+                            Duration (minutes):
+                        </label>
+                        <input type="number" id="lessonDuration" value="60" min="15" step="15" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="lessonInstructor">
+                            <i class="fas fa-user-tie"></i>
+                            Instructor:
+                        </label>
+                        <input type="text" id="lessonInstructor" placeholder="Instructor name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="lessonNotes">
+                        <i class="fas fa-sticky-note"></i>
+                        Notes:
+                    </label>
+                    <textarea id="lessonNotes" placeholder="Additional notes about the lesson"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="lessonReminder">
+                        <span class="checkmark"></span>
+                        Enable notification reminder (15 minutes before)
+                    </label>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
+                    <button type="button" class="btn-danger" id="deleteBtn">Delete</button>
+                    <button type="submit" class="btn-primary">Save Lesson</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Advanced Client Scheduling Interface will be injected here by JavaScript -->
+
+    <!-- JavaScript Files -->
+    <script src="script.js"></script>
+    <script src="client-scheduler.js"></script>
+    <script src="client-modals.js"></script>
+
+    <!-- Initialization Script -->
+    <script>
+        // Initialize the original calendar
+        window.calendar = null;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Initializing Swimming Calendar System...');
+            
+            // Initialize basic calendar first
+            try {
+                window.calendar = new SwimmingCalendar();
+                console.log('✅ Basic calendar initialized');
+            } catch (error) {
+                console.error('❌ Failed to initialize basic calendar:', error);
+            }
+            
+            // The client scheduler and modals will initialize themselves
+            // via their own DOMContentLoaded handlers with proper retry logic
+        });
+
+        // Global utility functions for the scheduler
+        
+        // Debug function to test client scheduler
+        function testClientScheduler() {
+            console.log('🧪 Testing client scheduler...');
+            console.log('clientScheduler available:', !!window.clientScheduler);
+            console.log('clientModals available:', !!window.clientModals);
+            
+            if (window.clientScheduler) {
+                try {
+                    window.clientScheduler.openClientModal();
+                } catch (error) {
+                    console.error('❌ Error opening client modal:', error);
+                    alert('Error: ' + error.message);
+                }
+            } else {
+                alert('Client scheduler is not ready yet. Please wait a moment and try again.');
+            }
+        }
+        
+        // Add global functions that buttons can call safely
+        window.openClientModal = function(clientId = null) {
+            if (window.clientScheduler) {
+                window.clientScheduler.openClientModal(clientId);
+            } else {
+                console.warn('⚠️ Client scheduler not ready, please wait...');
+                alert('The client management system is still loading. Please wait a moment and try again.');
+            }
+        };
+        
+        // Global wrapper functions for scheduler methods
+        window.showTab = function(tabName) {
+            if (window.clientScheduler) {
+                window.clientScheduler.showTab(tabName);
+            }
+        };
+        
+        window.generateClusters = function() {
+            if (window.clientScheduler) {
+                window.clientScheduler.generateClusters();
+            }
+        };
+        
+        window.generateRecommendations = function() {
+            if (window.clientScheduler) {
+                window.clientScheduler.generateRecommendations();
+            }
+        };
+        
+        window.editClient = function(clientId) {
+            if (window.clientScheduler) {
+                window.clientScheduler.editClient(clientId);
+            }
+        };
+        
+        window.deleteClient = function(clientId) {
+            if (window.clientScheduler) {
+                window.clientScheduler.deleteClient(clientId);
+            }
+        };
+        
+        window.scheduleRecommendation = function(recommendationId) {
+            if (window.clientScheduler) {
+                window.clientScheduler.scheduleRecommendation(recommendationId);
+            }
+        };
+        
+        window.viewRecommendationDetails = function(recommendationId) {
+            if (window.clientScheduler) {
+                window.clientScheduler.viewRecommendationDetails(recommendationId);
+            }
+        };
+        
+        // Global wrapper functions for modal methods
+        window.closeClientModal = function() {
+            if (window.clientModals) {
+                window.clientModals.closeClientModal();
+            }
+        };
+        
+        window.closeAvailabilityModal = function() {
+            if (window.clientModals) {
+                window.clientModals.closeAvailabilityModal();
+            }
+        };
+        
+        window.addAvailabilityForClient = function(clientId) {
+            if (window.clientModals) {
+                window.clientModals.addAvailabilityForClient(clientId);
+            }
+        };
+        
+        window.editAvailabilitySlot = function(clientId, slotId) {
+            if (window.clientModals) {
+                window.clientModals.editAvailabilitySlot(clientId, slotId);
+            }
+        };
+        
+        window.deleteAvailabilitySlot = function(clientId, slotId) {
+            if (window.clientModals) {
+                window.clientModals.deleteAvailabilitySlot(clientId, slotId);
+            }
+        };
+        
+        function showLoadingSpinner(containerId) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading...</p>
+                    </div>
+                `;
+            }
+        }
+
+        function showError(containerId, message) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
+                        ${message}
+                    </div>
+                `;
+            }
+        }
+
+        // Sample data loader (optional - for testing)
+        function loadSampleClients() {
+            if (window.clientScheduler && window.clientScheduler.clients.length === 0) {
+                const sampleClients = [
+                    {
+                        name: "Alice Johnson",
+                        email: "alice@example.com",
+                        phone: "+1 (555) 123-4567",
+                        address: "123 Main St, San Francisco, CA 94102",
+                        preferences: {
+                            skillLevel: "intermediate",
+                            ageGroup: "adult",
+                            notes: "Prefers morning sessions"
+                        }
+                    },
+                    {
+                        name: "Bob Smith",
+                        email: "bob@example.com",
+                        phone: "+1 (555) 987-6543",
+                        address: "456 Oak Ave, San Francisco, CA 94103",
+                        preferences: {
+                            skillLevel: "beginner",
+                            ageGroup: "adult",
+                            notes: "New swimmer, needs patient instruction"
+                        }
+                    },
+                    {
+                        name: "Carol Davis",
+                        email: "carol@example.com",
+                        phone: "+1 (555) 456-7890",
+                        address: "789 Pine St, San Francisco, CA 94104",
+                        preferences: {
+                            skillLevel: "advanced",
+                            ageGroup: "adult",
+                            notes: "Training for triathlon"
+                        }
+                    }
+                ];
+
+                // Add sample availability
+                const sampleAvailability = [
+                    // Alice - Monday/Wednesday evenings
+                    { clientIndex: 0, dayOfWeek: 1, startTime: "18:00", endTime: "20:00", priority: "high" },
+                    { clientIndex: 0, dayOfWeek: 3, startTime: "18:00", endTime: "20:00", priority: "high" },
+                    
+                    // Bob - Tuesday/Thursday mornings
+                    { clientIndex: 1, dayOfWeek: 2, startTime: "09:00", endTime: "11:00", priority: "medium" },
+                    { clientIndex: 1, dayOfWeek: 4, startTime: "09:00", endTime: "11:00", priority: "medium" },
+                    
+                    // Carol - Monday/Wednesday/Friday mornings
+                    { clientIndex: 2, dayOfWeek: 1, startTime: "06:00", endTime: "08:00", priority: "high" },
+                    { clientIndex: 2, dayOfWeek: 3, startTime: "06:00", endTime: "08:00", priority: "high" },
+                    { clientIndex: 2, dayOfWeek: 5, startTime: "06:00", endTime: "08:00", priority: "medium" }
+                ];
+
+                // Add clients
+                const addedClients = sampleClients.map(clientData => 
+                    window.clientScheduler.addClient(clientData)
+                );
+
+                // Add availability
+                setTimeout(() => {
+                    sampleAvailability.forEach(avail => {
+                        const client = addedClients[avail.clientIndex];
+                        if (client) {
+                            window.clientScheduler.addClientAvailability(client.id, {
+                                dayOfWeek: avail.dayOfWeek,
+                                startTime: avail.startTime,
+                                endTime: avail.endTime,
+                                priority: avail.priority,
+                                recurring: true
+                            });
+                        }
+                    });
+
+                    // Refresh the UI
+                    window.clientScheduler.renderClientsList();
+                    console.log('Sample clients and availability added!');
+                }, 2000);
+            }
+        }
+
+        // Uncomment the next line to load sample data for testing
+        // setTimeout(loadSampleClients, 3000);
+    </script>
+</body>
+</html>
